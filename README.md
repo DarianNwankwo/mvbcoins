@@ -16,6 +16,6 @@ system.</p>
   <li>Begin transactions!</li>
 </ol>
 
-Markup: ```bash
+```bash
 pip install pyinstaller
 ```
