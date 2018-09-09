@@ -1,4 +1,5 @@
 import argparse
+import socket
 
 from hashlib import sha256
 
@@ -67,6 +68,12 @@ def show_utxo_status():
     print("Account #{}: {} MVBcoins".format(account, UTXO[account]))
 
 
-def echo_message_to(peers, sock):
+def echo_message_to(peers, data):
   """ Echo valid messages to peer nodes. """
+  msg = data
+  for peer in peers:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect(("localhost", int(peer)))
+    sock.send(msg)
+    sock.close()
   

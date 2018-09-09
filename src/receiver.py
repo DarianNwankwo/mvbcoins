@@ -11,6 +11,7 @@ from utxo import UTXO
 from constants import *
 from helper import *
 
+NODE_PORT, PEER_NODE_PORTS = parse_arguments()
 
 def create_socket_server(node_ip, port):
   """ Opens the server at node_ip as a TCP/IP socket server for receiving messages. """
@@ -34,7 +35,8 @@ def listen(sock):
           if tx.close(): break
           valid = handle_transaction(tx)
           if valid:
-            echo_message_to(PEER_NODE_PORTS, node_socket)
+            print(PEER_NODE_PORTS)
+            echo_message_to(PEER_NODE_PORTS, data)
         else:
           break
     finally:
@@ -43,7 +45,6 @@ def listen(sock):
 
 
 def main():
-  NODE_PORT, PEER_NODE_PORTS = parse_arguments()
   # print("Node: {} -- Peer Nodes: {}".format(NODE_PORT, PEER_NODE_PORTS))
   node_socket = create_socket_server('localhost', NODE_PORT)
   listen(node_socket)
