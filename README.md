@@ -9,9 +9,13 @@
 system.</p>
 <ol>
   <li>Install "pyinstaller" by running the following command from your
-  command-line interface ==> Markup: ```pip install pyinstaller```</li>
+  command-line interface ==> ```pip install pyinstaller```</li>
   <li>Build the project from the root directory ==> ```make build```</li>
   <li>Run the executable with the proper arguments. (Note: port & peers are just examples here) ==> ```./node --port
   9182 --peers 9034,9872,8990,8024,9011```</li>
   <li>Begin transactions!</li>
 </ol>
+
+Markup: ```bash
+pip install pyinstaller
+```
