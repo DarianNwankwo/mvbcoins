@@ -6,10 +6,12 @@ up a server and receives messages using sockets.
 """
 import socket
 
+from transaction import Transaction
 from utxo import UTXO
 
 from constants import *
 from helper import *
+
 
 NODE_PORT, PEER_NODE_PORTS = parse_arguments()
 
@@ -28,14 +30,15 @@ def listen(sock):
     connection, client_address = sock.accept()
     try:
       while True:
-        data = connection.recv(129)
+        data = connection.recv(129) # data received as raw bytearray
         # Do something only if we've recevied data
         if data:
-          tx = parse_transaction(data.hex())
+          tx = Transaction(data)
           if tx.close(): break
-          valid = handle_transaction(tx)
+          valid = handle_transaction(tx) # consider having a ledger class handle this
           if valid:
             print(PEER_NODE_PORTS)
+            log_transaction(tx)
             echo_message_to(PEER_NODE_PORTS, data)
         else:
           break

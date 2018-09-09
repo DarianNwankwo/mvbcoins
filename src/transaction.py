@@ -1,14 +1,18 @@
 class Transaction(object):
 
-  def __init__(self, opcode, sender, receiver, amount, timestamp):
-    self.opcode = opcode
-    self.sender = sender
-    self.receiver = receiver
-    self.amount = amount
-    self.timestamp = timestamp
+  def __init__(self, byte_array):
+    """ Stores the bytearray and arguments of it. """
+    self.byte_array = byte_array
+    tx_info = self.parse_transaction(bytearray.hex())
+    self.opcode = tx_info[0]
+    self.sender = tx_info[1]
+    self.receiver = tx_info[2]
+    self.amount = tx_info[3]
+    self.timestamp = tx_info[4]
 
   
   def __str__(self):
+    """ Pretty printing of transaction for debugging purposes. """
     return "\nOpcode: {} -- Sender: {} -- Receiver: {} -- Amount: {} -- Timestamp: {}\n".format(
       self.opcode, self.sender, self.receiver, self.amount, self.timestamp
     )
@@ -24,3 +28,20 @@ class Transaction(object):
 
   def close(self):
     return self.opcode == 1
+  
+  def parse_transaction(self, data_as_hex):
+    """ Returns a tuple of the arguments decoded from the raw byte array. """
+    opcode = self.parse_ascii_byte_array(data_as_hex[0:2])
+    sender = data_as_hex[2:66]
+    receiver = data_as_hex[66:130]
+    amount = self.parse_ascii_byte_array(data_as_hex[130:194])
+    timestamp = self.parse_ascii_byte_array(data_as_hex[194:258])
+    return (opcode, sender, receiver, amount, timestamp)
+
+  def parse_ascii_byte_array(self, ascii_string):
+    """ Parses the opcode, amount, and timestamp and returns the integer representation. """
+    val = ""
+    for i in range(len(ascii_string)//2):
+        val += chr(int(ascii_string[ 2*i : 2*i + 2 ], 16))
+    
+    return int(val)

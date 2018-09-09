@@ -19,25 +19,6 @@ def parse_arguments():
   return (port, peers)
 
 
-def parse_ascii_byte_array(ascii_string):
-    val = ""
-    for i in range(len(ascii_string)//2):
-        val += chr(int(ascii_string[ 2*i : 2*i + 2 ], 16))
-    
-    return int(val)
-
-
-def parse_transaction(data_as_hex):
-  opcode = parse_ascii_byte_array(data_as_hex[0:2])
-  sender = data_as_hex[2:66]
-  receiver = data_as_hex[66:130]
-  amount = parse_ascii_byte_array(data_as_hex[130:194])
-  timestamp = parse_ascii_byte_array(data_as_hex[194:258])
-  tx = Transaction(opcode, sender, receiver, amount, timestamp)
-  print(tx)
-  return tx
-
-
 def is_double_spending(tx):
   """ Returns true if a transaction is an occurrence of double spending. """
   tx_hash = sha256(tx.bytify()).hexdigest()
@@ -47,14 +28,13 @@ def is_double_spending(tx):
 def log_transaction(tx):
   """ Stores transaction. """
   TRANSACTION_OCCURRENCE[ sha256(tx.bytify()).hexdigest() ] = True
-  TRANSACTION_HISTORY.append(tx)
+  TRANSACTION_HISTORY.append(tx.byte_array)
 
 
 def handle_transaction(tx):
   """ Initiate coin transfer and update history log. """
   if not is_double_spending(tx):
     UTXO[tx.sender], UTXO[tx.receiver] = UTXO[tx.sender] - tx.amount, UTXO[tx.receiver] + tx.amount
-    log_transaction(tx)
     return True
   else:
     # don't handle transaction
@@ -63,6 +43,7 @@ def handle_transaction(tx):
     
 
 def show_utxo_status():
+  """ (Debugging Purposes) Display all accounts and their money. """
   # print("Size of UTXO: {}".format(len(UTXO)))
   for account in UTXO:
     print("Account #{}: {} MVBcoins".format(account, UTXO[account]))
