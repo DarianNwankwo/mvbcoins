@@ -3,7 +3,7 @@ class Transaction(object):
   def __init__(self, byte_array):
     """ Stores the bytearray and arguments of it. """
     self.byte_array = byte_array
-    tx_info = self.parse_transaction(bytearray.hex())
+    tx_info = self.parse_transaction(byte_array.hex())
     self.opcode = tx_info[0]
     self.sender = tx_info[1]
     self.receiver = tx_info[2]

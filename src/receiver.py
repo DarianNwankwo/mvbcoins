@@ -37,7 +37,7 @@ def listen(sock):
           if tx.close(): break
           valid = handle_transaction(tx) # consider having a ledger class handle this
           if valid:
-            print(PEER_NODE_PORTS)
+            # print(PEER_NODE_PORTS)
             log_transaction(tx)
             echo_message_to(PEER_NODE_PORTS, data)
         else:
