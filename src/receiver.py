@@ -30,14 +30,18 @@ def listen(sock):
     connection, client_address = sock.accept()
     try:
       while True:
-        data = connection.recv(129) # data received as raw bytearray
-        # Do something only if we've recevied data
+        # data = connection.recv(129) # data received as raw bytearray
+        data = connection.recv(1)
+        if not Transaction.should_close(data):
+          data += connection.recv(128)
+        else:
+          continue
+        # Do something only if we've recevied data without an opcode of 1
         if data:
           tx = Transaction(data)
-          if tx.close(): break
           valid = handle_transaction(tx) # consider having a ledger class handle this
           if valid:
-            print(PEER_NODE_PORTS)
+            # print(PEER_NODE_PORTS)
             log_transaction(tx)
             echo_message_to(PEER_NODE_PORTS, data)
         else:

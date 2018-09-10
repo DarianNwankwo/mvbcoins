@@ -57,4 +57,3 @@ def echo_message_to(peers, data):
     sock.connect(("localhost", int(peer)))
     sock.send(msg)
     sock.close()
-  

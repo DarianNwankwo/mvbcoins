@@ -26,19 +26,24 @@ class Transaction(object):
     timestamp = str(self.timestamp).encode("utf-8")
     return bytes(opcode) + bytes(sender) + bytes(receiver) + bytes(amount) + bytes(timestamp)
 
-  def close(self):
-    return self.opcode == 1
+  @classmethod
+  def should_close(cls, opcode_bytes):
+    """ Returns """
+    opcode = opcode_bytes.hex()
+    opcode = Transaction.parse_ascii_byte_array(opcode)
+    return opcode == 1
   
   def parse_transaction(self, data_as_hex):
     """ Returns a tuple of the arguments decoded from the raw byte array. """
-    opcode = self.parse_ascii_byte_array(data_as_hex[0:2])
+    opcode = Transaction.parse_ascii_byte_array(data_as_hex[0:2])
     sender = data_as_hex[2:66]
     receiver = data_as_hex[66:130]
-    amount = self.parse_ascii_byte_array(data_as_hex[130:194])
-    timestamp = self.parse_ascii_byte_array(data_as_hex[194:258])
+    amount = Transaction.parse_ascii_byte_array(data_as_hex[130:194])
+    timestamp = Transaction.parse_ascii_byte_array(data_as_hex[194:258])
     return (opcode, sender, receiver, amount, timestamp)
 
-  def parse_ascii_byte_array(self, ascii_string):
+  @classmethod
+  def parse_ascii_byte_array(cls, ascii_string):
     """ Parses the opcode, amount, and timestamp and returns the integer representation. """
     val = ""
     for i in range(len(ascii_string)//2):
