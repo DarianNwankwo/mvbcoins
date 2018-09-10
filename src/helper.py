@@ -55,6 +55,6 @@ def echo_message_to(peers, data):
   for peer in peers:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(("localhost", int(peer)))
-    sock.send(msg)
+    sock.sendall(msg)
     sock.close()
   
