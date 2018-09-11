@@ -48,5 +48,4 @@ class Transaction(object):
     val = ""
     for i in range(len(ascii_string)//2):
         val += chr(int(ascii_string[ 2*i : 2*i + 2 ], 16))
-    
     return int(val)

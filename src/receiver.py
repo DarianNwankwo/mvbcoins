@@ -31,7 +31,8 @@ def listen(sock):
     try:
       while True:
         # data = connection.recv(129) # data received as raw bytearray
-        data = connection.recv(1)
+        data = connection.recv(2)
+        print("Data: {}".format(data))
         if data and not Transaction.should_close(data):
           data += connection.recv(128)
         else:
