@@ -8,7 +8,6 @@ import socket
 from block import Block
 from ledger import Ledger
 from transaction import Transaction
-from constants import NUM_OF_CONNECT_REQUEST
 
 WAITING_FOR_CONNECTION = True
 RECEIVING_DATA = True
@@ -20,11 +19,8 @@ BLOCK_OPCODE = "2"
 GET_BLOCK_OPCODE = "3"
 NUM_OF_CONNECT_REQUEST = 5
 
-
-
 class Server(object):
   """ Handles opening sockets and lisening for information and broadcasting information. """
-
 
   def __init__(self, config):
     """ Open the socket for information retrieval at port <port>.
@@ -40,21 +36,21 @@ class Server(object):
 
   def _unpack(self, config):
     """ Unpacks the config object and creates instance variables. """
-    self.port = config.port
-    self.peers = config.peers
-    self.tx_per_block = config.numtxinblock
-    self.difficulty = config.difficulty
-    self.num_of_cores = config.num_of_cores
+    self.node_ip = config.node_ip
+    self.port = int(config.port)
+    self.peers = [int(peer) for peer in config.peers]
+    self.tx_per_block = int(config.tx_per_block)
+    self.difficulty = int(config.difficulty)
+    self.num_of_cores = int(config.num_of_cores)
 
 
   def _create_msg_mapping(self):
     """ Returns an array such that if indexed with the opcode of a message it returns the message size in bytes. """
     return [
-      None,
-      128*Bytes,
-      0*Bytes,
-      (160 + (128 * self.tx_per_block))*Bytes,
-      32*Bytes
+      128*BYTES,
+      0*BYTES,
+      (160 + (128 * self.tx_per_block))*BYTES,
+      32*BYTES
     ]
 
 
@@ -66,7 +62,7 @@ class Server(object):
     return node_socket
 
 
-  def _still_handling_data(data):
+  def _still_handling_data(self, data):
     """ Return true if data is still being received. """
     return data != b""
 
@@ -75,46 +71,48 @@ class Server(object):
     """ Listens for a connection and corresponding raw bytes. """
     while WAITING_FOR_CONNECTION:
       # Helper variables
-      cur_opcode_ndx = 0
-      msg_start_ndx = cur_opcode_ndx + 1
       msg_end_ndx = 0
       data = b""
       is_first = True
       print("Waiting for a connection...")
-      connection, client_address = self.sock.accept()
+      connection, client_address = self.socket.accept()
       try:
         # When msg_start_ndx == msg_end_ndx this returns an empty byte (b"")
         while is_first or self._still_handling_data( data[msg_start_ndx : msg_end_ndx] ):
+          print("looping...")
           is_first = False
           data += connection.recv(PAYLOAD) # buffered data
           if data:
             print("Data received: {}".format(data))
-            cur_opcode = chr(int(data[cur_opcode_ndx : cur_opcode_ndx + 2].hex(), 16))
-            msg_start_ndx = self.msg_size_mapping[ int(cur_opcode) ]
-            msg_end_ndx = pass
+            cur_opcode = chr(int(data[0:1].hex(), 16)) # bytearray -> hex -> int -> ascii
+            msg_start_ndx = 1
+            msg_end_ndx = msg_start_ndx + self.msg_size_mapping[ int(cur_opcode) ]
             if cur_opcode == TRANSACTION_OPCODE:
-              # handle transaction, update msg_start_ndx
               tx = Transaction(data[msg_start_ndx : msg_end_ndx])
               self.ledger.process_transaction(tx)
             elif cur_opcode == CLOSE_OPCODE:
               # handle close
               self.terminate_server()
+              break
             elif cur_opcode == BLOCK_OPCODE:
               # handle block
-              block = Block(data[msg_start_ndx : msg_end_ndx])
+              block = Block(data[msg_start_ndx : msg_end_ndx], self.difficulty)
               self.ledger.process_block(block)
             elif cur_opcode == GET_BLOCK_OPCODE:
               # handle get block
               # get_block = self.ledger.get_block(block_height)
               self.ledger.process_get_block(data[msg_start_ndx : msg_end_ndx])
+            data = data[msg_end_ndx:] # dump processed data from buffer
           else:
             break
       finally:
+        # end connection with client
+        self.ledger.show_utxo_status()
+        connection.close()
 
-
-  
   def terminate_server(self):
-    pass
+    """ Stop receiving data on port (terminate socket). """
+    self.socket.close()
 
 
   def _echo_message_to(self, peers, data):
@@ -126,5 +124,14 @@ class Server(object):
       sock.close()
 
 
+  def broadcast_transaction(self):
+    pass
+
+  
+  def broadcast_block(self):
+    pass
+
+
   def run(self):
+    """ Creeate and run server instance. """
     self._listen()

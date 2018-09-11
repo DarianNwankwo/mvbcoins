@@ -4,9 +4,7 @@ Date: September 10, 2018
 Description: Ledger class for handling utxo operations and keeping track of the history. Functionally
 equivalent to what is know as a 'blockchain.'
 """
-
 from hashlib import sha256
-from constants import INIT_PAYOUT
 
 NUM_OF_ACCOUNTS = 100
 INITIAL_PAYOUT = int("100,000".replace(",", ""))
@@ -41,11 +39,18 @@ class Ledger(object):
     self.tx_history.append( tx.raw_byte_array() )
 
 
+  def log_block(self, block):
+    """ Stores block. """
+    # self.block_occurrence[ block.calculate_hash() ] = True
+    self.block_history.append( block.raw_byte_array() )
+
+
   def process_transaction(self, tx):
-    """ Initiate coin transfer and update history log. """
+    """ Initiate coin transfer and update history log via a Transaction object. """
     if not self.is_double_spending(tx):
       self.utxo[tx.sender] = self.utxo[tx.sender] - tx.amount
       self.utxo[tx.receiver] = self.utxo[tx.receiver] + tx.amount
+      self.log_transaction(tx)
       return True
     else:
       # raise an error
@@ -54,11 +59,13 @@ class Ledger(object):
 
   
   def process_block(self, block):
-    pass
+    """ Initiate block proof-of-work (mining) and update history log via a Block object. """
+    self.log_block(block)
 
 
   def process_get_block(self, block_height):
-    pass
+    """ Return the byte array of a block at block_height. """
+    return self.blocks[block_height]
 
 
   def get_block(self, block_height):
@@ -70,8 +77,3 @@ class Ledger(object):
     """ (Debugging Purposes) Display all accounts and their money. """
     for account in self.utxo:
       print("Account #{}: {} MVBcoins".format(account, self.utxo[account]))
-
-  
-
-
-UTXO = create_utxo_set()

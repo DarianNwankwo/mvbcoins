@@ -21,5 +21,5 @@ class Config(object):
     parser.add_argument("--numtxinblock", help="The number of transactions to be put in a block. Defaults to 50,000", required=False)
     parser.add_argument("--difficulty", help="Difficulty parameter. This is the number of leading bytes that must be zero during mining", required=True)
     parser.add_argument("--numcores", help="The number of cores your node supports", required=True)
-    port, peers, tx_per_block, difficulty, num_of_cores = parser.parse_args()
-    return (port, peers.split(","), tx_per_block, difficulty, num_of_cores)
+    args = parser.parse_args()
+    return (args.port, args.peers.split(","), args.numtxinblock, args.difficulty, args.numcores)
