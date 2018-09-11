@@ -1,6 +1,6 @@
 # mvbcoins - A Minimally Viable Blockchain
 ## Actionables
-1. Refactor code for server/node by encapsulating operations using a class
+1. Update step-by-step instructions
 
 ## Step-by-step process to building and running the executable
 #### This software project assumes you have python 3.x installed on your

@@ -48,7 +48,6 @@ class Block(object):
     """ Calculates the hash value of a block. """
     sum_bytes = b""
     for attr, val in vars(self).items():
-      # 
       if attr not in ('byte_array', 'hash', 'difficulty'):
         sum_bytes += bytes(val, "ascii")
     return sha256(sum_bytes).hexdigest()
@@ -64,4 +63,4 @@ class Block(object):
   @classmethod
   def create_genesis_block(cls):
     """ Create a genesis block to start the chain. """
-    
+    pass
