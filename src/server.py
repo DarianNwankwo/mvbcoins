@@ -64,6 +64,7 @@ class Server(object):
 
   def _still_handling_data(self, data):
     """ Return true if data is still being received. """
+    # print("Data: {}".format(data))
     return data != b""
 
 
@@ -78,12 +79,13 @@ class Server(object):
       connection, client_address = self.socket.accept()
       try:
         # When msg_start_ndx == msg_end_ndx this returns an empty byte (b"")
-        while is_first or self._still_handling_data( data[msg_start_ndx : msg_end_ndx] ):
-          print("looping...")
+        # while is_first or self._still_handling_data( data[msg_start_ndx : msg_end_ndx] ):
+        while True:
+          # print("looping...")
           is_first = False
           data += connection.recv(PAYLOAD) # buffered data
           if data:
-            print("Data received: {}".format(data))
+            # print("Data received: {}".format(data))
             cur_opcode = chr(int(data[0:1].hex(), 16)) # bytearray -> hex -> int -> ascii
             msg_start_ndx = 1
             msg_end_ndx = msg_start_ndx + self.msg_size_mapping[ int(cur_opcode) ]
@@ -103,6 +105,7 @@ class Server(object):
               # get_block = self.ledger.get_block(block_height)
               self.ledger.process_get_block(data[msg_start_ndx : msg_end_ndx])
             data = data[msg_end_ndx:] # dump processed data from buffer
+            print("Start: {} - End: {}\n".format(msg_start_ndx, msg_end_ndx))
           else:
             break
       finally:

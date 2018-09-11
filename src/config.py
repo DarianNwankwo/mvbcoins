@@ -18,7 +18,7 @@ class Config(object):
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", help="Port your node is listening on", required=True)
     parser.add_argument("--peers", help="A comma separated list of peer ports your node will broadcast transactions received to", required=True)
-    parser.add_argument("--numtxinblock", help="The number of transactions to be put in a block. Defaults to 50,000", required=False)
+    parser.add_argument("--numtxinblock", help="The number of transactions to be put in a block. Defaults to 50,000", required=False, default=50000)
     parser.add_argument("--difficulty", help="Difficulty parameter. This is the number of leading bytes that must be zero during mining", required=True)
     parser.add_argument("--numcores", help="The number of cores your node supports", required=True)
     args = parser.parse_args()
