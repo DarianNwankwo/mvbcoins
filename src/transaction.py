@@ -1,4 +1,11 @@
+"""
+Author: Darian Osahar Nwankwo
+Date: September 5, 2018
+Description: Transaction class for handling transactions
+"""
+
 class Transaction(object):
+  """ Hanldes the hashing and processing of raw bytes that represent a transaction. """
 
   def __init__(self, byte_array):
     """ Stores the bytearray and arguments of it. """
@@ -17,14 +24,19 @@ class Transaction(object):
       self.opcode, self.sender, self.receiver, self.amount, self.timestamp
     )
   
-  def bytify(self):
-    """ Get the byte representation of each transaction component wise"""
-    opcode = str(self.opcode).encode("utf-8")
-    sender = str(self.sender).encode("utf-8")
-    receiver = str(self.sender).encode("utf-8")
-    amount = str(self.amount).encode("utf-8")
-    timestamp = str(self.timestamp).encode("utf-8")
-    return bytes(opcode) + bytes(sender) + bytes(receiver) + bytes(amount) + bytes(timestamp)
+
+  def raw_byte_array():
+    """ Returns the raw byte array of the transaction. """
+    return self.byte_array
+
+
+  def calculate_hash(self):
+    """ Calculates the hash value of a transaction. """
+    sum_bytes = b""
+    for attr, val in vars(self):
+      sum_bytes += bytes(val, "ascii")
+    return sha256(sum_bytes).hexdigest()
+
 
   @classmethod
   def should_close(cls, opcode_bytes):
@@ -33,6 +45,7 @@ class Transaction(object):
     opcode = Transaction.parse_ascii_byte_array(opcode)
     return opcode == 1
   
+
   def parse_transaction(self, data_as_hex):
     """ Returns a tuple of the arguments decoded from the raw byte array. """
     opcode = Transaction.parse_ascii_byte_array(data_as_hex[0:2])
@@ -41,6 +54,7 @@ class Transaction(object):
     amount = Transaction.parse_ascii_byte_array(data_as_hex[130:194])
     timestamp = Transaction.parse_ascii_byte_array(data_as_hex[194:258])
     return (opcode, sender, receiver, amount, timestamp)
+
 
   @classmethod
   def parse_ascii_byte_array(cls, ascii_string):
