@@ -109,5 +109,3 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
-# ignore executable
-node
