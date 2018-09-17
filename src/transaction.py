@@ -47,7 +47,7 @@ class Transaction(object):
     receiver = data_as_hex[64:128]
     amount = self._parse_ascii_byte_array(data_as_hex[128:192])
     timestamp = self._parse_ascii_byte_array(data_as_hex[192:256])
-    print("\nOutput: {}\n".format((sender, receiver, amount, timestamp)))
+    # print("\nOutput: {}\n".format((sender, receiver, amount, timestamp)))
     return (sender, receiver, amount, timestamp)
 
 

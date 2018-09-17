@@ -1,7 +1,7 @@
 build:
-	cd src/ && pyinstaller --onefile main.py
-	mv ./src/dist/main ./node
+	echo '#!/usr/bin/env python3' | cat - src/main.py > src/main.py.tmp
+	mv src/main.py.tmp src/main.py
 
 clean:
-	rm -rf ./src/dist ./src/build
-	rm ./src/main.spec ./node
+	tail src/main.py -n +2 > src/temp.py
+	mv src/temp.py src/main.py

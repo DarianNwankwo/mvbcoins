@@ -39,9 +39,9 @@ class Server(object):
     self.node_ip = config.node_ip
     self.port = int(config.port)
     self.peers = [int(peer) for peer in config.peers]
-    self.tx_per_block = int(config.tx_per_block)
-    self.difficulty = int(config.difficulty)
-    self.num_of_cores = int(config.num_of_cores)
+    # self.tx_per_block = int(config.tx_per_block)
+    # self.difficulty = int(config.difficulty)
+    # self.num_of_cores = int(config.num_of_cores)
 
 
   def _create_msg_mapping(self):
@@ -49,8 +49,8 @@ class Server(object):
     return [
       128*BYTES,
       0*BYTES,
-      (160 + (128 * self.tx_per_block))*BYTES,
-      32*BYTES
+      # (160 + (128 * self.tx_per_block))*BYTES,
+      # 32*BYTES
     ]
 
 
@@ -86,6 +86,7 @@ class Server(object):
           data += connection.recv(PAYLOAD) # buffered data
           if data:
             # print("Data received: {}".format(data))
+            byte_opcode = data[0:1]
             cur_opcode = chr(int(data[0:1].hex(), 16)) # bytearray -> hex -> int -> ascii
             msg_start_ndx = 1
             msg_end_ndx = msg_start_ndx + self.msg_size_mapping[ int(cur_opcode) ]
@@ -104,13 +105,15 @@ class Server(object):
               # handle get block
               # get_block = self.ledger.get_block(block_height)
               self.ledger.process_get_block(data[msg_start_ndx : msg_end_ndx])
+            self._echo_message_to(self.peers, byte_opcode + data[msg_start_ndx : msg_end_ndx])
             data = data[msg_end_ndx:] # dump processed data from buffer
-            print("Start: {} - End: {}\n".format(msg_start_ndx, msg_end_ndx))
+            # print("Start: {} - End: {}\n".format(msg_start_ndx, msg_end_ndx))
           else:
             break
       finally:
         # end connection with client
-        self.ledger.show_utxo_status()
+        # self.ledger.show_utxo_status()
+        print("Finished.")
         connection.close()
 
   def terminate_server(self):
