@@ -70,7 +70,8 @@ class Server(object):
   def _handle_data_from_connection(self, connection, address):
     """ Receive data from a connection until all data has been received. """
     self.thread_lock.acquire()
-    data = self._receive_from(connection, address)
+    data, c = self._receive_from(connection, address)
+    input("Size of Data and Counter: {}".format(len(data)))
     while len(data) > 0:
       cur_opcode = chr(int(data[0:1].hex(), 16)) # bytearray -> hex -> int -> char(ascii)
       msg_end_ndx = OPCODE_OFFSET + self.msg_size_mapping[ int(cur_opcode) ]
@@ -81,8 +82,6 @@ class Server(object):
       elif cur_opcode == CLOSE_OPCODE:
         # handle close
         broadcast = True
-        # print("Sent close message...")
-        # connection.close()
       elif cur_opcode == BLOCK_OPCODE:
         # handle block
         block = Block(data[OPCODE_OFFSET : msg_end_ndx], self.difficulty)
@@ -92,10 +91,8 @@ class Server(object):
         # get_block = self.ledger.get_block(block_height)
         self.ledger.process_get_block(data[OPCODE_OFFSET : msg_end_ndx])
       
-      # if broadcast:
-      #   print("Executing echo...")
-      #   self._echo_message_to(self.peers, data[msg_start_ndx - 1 : msg_end_ndx])
-      self._echo_message_to(data[0 : msg_end_ndx])
+      if broadcast:
+        self._echo_message_to(data[0 : msg_end_ndx])
       # print("\nData Buffer Before: {}\n".format(data))
       data = data[msg_end_ndx:] # dump processed data from buffer
       # print("\nData Buffer After: {}\n".format(data))
@@ -110,15 +107,13 @@ class Server(object):
     while incoming:
       data += incoming
       incoming = connection.recv(PAYLOAD)
-    return data
+    return data, counter
 
 
   def _listen(self):
     """ Listens for a connection and corresponding raw bytes. """
     while WAITING_FOR_CONNECTION:
       # Helper variables
-      msg_end_ndx = 0
-      data = b""
       print("Waiting for a connection...")
       connection, addr = self.socket.accept()
       connection.settimeout(60*SECONDS)
@@ -130,10 +125,10 @@ class Server(object):
   def _echo_message_to(self, data):
     """ Echo valid messages to peer nodes. """
     # print("\nBroadcast: {}\n".format(Transaction(data[1:])))
-    # print("Broadcast Data: {}".format(data))
+    print("Broadcast Data: {}".format(data))
     for peer in self.peers:
       sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-      sock.connect( ("localhost", int(peer)) )
+      sock.connect( ("", int(peer)) )
       sock.send(data)
     sock.close()
 
