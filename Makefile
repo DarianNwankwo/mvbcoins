@@ -3,5 +3,5 @@ build:
 	mv src/main.py.tmp src/main.py
 
 clean:
-	tail src/main.py -n +2 > src/temp.py
+	tail -n +2 src/main.py > src/temp.py
 	mv src/temp.py src/main.py

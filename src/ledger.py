@@ -30,7 +30,9 @@ class Ledger(object):
 
   def is_double_spending(self, tx):
     """ Returns true if a transaction is an occurrence of double spending. """
-    return tx.calculate_hash() in self.tx_occurrence
+    # return tx.calculate_hash() in self.tx_occurrence
+    if tx.calculate_hash() in self.tx_occurrence:
+      return True
   
 
   def log_transaction(self, tx):
@@ -46,8 +48,8 @@ class Ledger(object):
 
 
   def process_transaction(self, tx):
-    """ Initiate coin transfer and update history log via a Transaction object. """
-    if not self.is_double_spending(tx):
+    """ Initiate coin transfer and update history log via a Transaction object and returns true if we should broadcast. """
+    if not self.is_double_spending(tx) and self._user_does_exist(tx) and self._user_has_funds(tx):
       self.utxo[tx.sender] = self.utxo[tx.sender] - tx.amount
       self.utxo[tx.receiver] = self.utxo[tx.receiver] + tx.amount
       self.log_transaction(tx)
@@ -57,9 +59,19 @@ class Ledger(object):
       print("\nSomeone is attempting to double spend...\n")
       return False
 
+
+  def _user_does_exist(self, tx):
+    """ Returns true if the user exists. """
+    return tx.sender in self.utxo and tx.receiver in self.utxo
+
   
+  def _user_has_funds(self, tx):
+    """ Returns true if the sender has enough coins to send, """
+    return self.utxo[tx.sender] - tx.amount >= 0
+
+
   def process_block(self, block):
-    """ Initiate block proof-of-work (mining) and update history log via a Block object. """
+    """ Initiate block proof-of-work (mining) and update history log via a Block object  and returns true if we should broadcast. """
     self.log_block(block)
 
 

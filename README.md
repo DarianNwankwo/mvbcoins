@@ -9,3 +9,7 @@ system.
 2. Build the project from the root directory ==> ```make build```
 3. Run the executable with the proper arguments. (Note: port & peers are just examples here) ==>  ```./node --port 9182 --peers 9034,9872,8990,8024,9011```
 4. Begin transactions
+
+
+Todo:
+Check if the user is valid

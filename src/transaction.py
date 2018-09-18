@@ -20,7 +20,7 @@ class Transaction(object):
   
   def __str__(self):
     """ Pretty printing of transaction for debugging purposes. """
-    return "\nSender: {} -- Receiver: {} -- Amount: {} -- Timestamp: {}\n".format(
+    return "Transaction [ Sender {}, Receiver {}, Amount {}, Timestamp {} ]".format(
       self.sender, self.receiver, self.amount, self.timestamp
     )
   
@@ -31,7 +31,7 @@ class Transaction(object):
 
 
   def calculate_hash(self):
-    """ Calculates the hash value of a transaction. """
+    """ Calculates the hash value of a transaction based on sender, receiver, amount, and timestamp. """
     sum_bytes = b""
     for attr, val in vars(self).items():
       if attr != "byte_array":

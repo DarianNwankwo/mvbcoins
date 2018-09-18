@@ -4,6 +4,7 @@ Date: September 10, 2018
 Description: Server class for handling socket operations
 """
 import socket
+import threading
 
 from block import Block
 from ledger import Ledger
@@ -17,7 +18,9 @@ TRANSACTION_OPCODE = "0"
 CLOSE_OPCODE = "1"
 BLOCK_OPCODE = "2"
 GET_BLOCK_OPCODE = "3"
-NUM_OF_CONNECT_REQUEST = 5
+NUM_OF_CONNECT_REQUEST = 10
+OPCODE_OFFSET = 1
+SECONDS = 1
 
 class Server(object):
   """ Handles opening sockets and lisening for information and broadcasting information. """
@@ -32,6 +35,8 @@ class Server(object):
     self.msg_size_mapping = self._create_msg_mapping()
     self.socket = self._create_socket_server()
     self.ledger = Ledger()
+    self.threads = []
+    self.thread_lock = threading.Lock()
 
 
   def _unpack(self, config):
@@ -62,10 +67,50 @@ class Server(object):
     return node_socket
 
 
-  def _still_handling_data(self, data):
-    """ Return true if data is still being received. """
-    # print("Data: {}".format(data))
-    return data != b""
+  def _handle_data_from_connection(self, connection, address):
+    """ Receive data from a connection until all data has been received. """
+    self.thread_lock.acquire()
+    data = self._receive_from(connection, address)
+    while len(data) > 0:
+      cur_opcode = chr(int(data[0:1].hex(), 16)) # bytearray -> hex -> int -> char(ascii)
+      msg_end_ndx = OPCODE_OFFSET + self.msg_size_mapping[ int(cur_opcode) ]
+      if cur_opcode == TRANSACTION_OPCODE:
+        tx = Transaction(data[OPCODE_OFFSET : msg_end_ndx]) # ignores opcode
+        print(tx)
+        broadcast = self.ledger.process_transaction(tx)
+      elif cur_opcode == CLOSE_OPCODE:
+        # handle close
+        broadcast = True
+        # print("Sent close message...")
+        # connection.close()
+      elif cur_opcode == BLOCK_OPCODE:
+        # handle block
+        block = Block(data[OPCODE_OFFSET : msg_end_ndx], self.difficulty)
+        broadcast = self.ledger.process_block(block)
+      elif cur_opcode == GET_BLOCK_OPCODE:
+        # handle get block
+        # get_block = self.ledger.get_block(block_height)
+        self.ledger.process_get_block(data[OPCODE_OFFSET : msg_end_ndx])
+      
+      # if broadcast:
+      #   print("Executing echo...")
+      #   self._echo_message_to(self.peers, data[msg_start_ndx - 1 : msg_end_ndx])
+      self._echo_message_to(data[0 : msg_end_ndx])
+      # print("\nData Buffer Before: {}\n".format(data))
+      data = data[msg_end_ndx:] # dump processed data from buffer
+      # print("\nData Buffer After: {}\n".format(data))
+      # input()
+    self.ledger.show_utxo_status()
+    self.thread_lock.release()
+
+  def _receive_from(self, connection, address):
+    """ Receive data from a connection until all data has been received. """
+    incoming = connection.recv(PAYLOAD)
+    data = b""
+    while incoming:
+      data += incoming
+      incoming = connection.recv(PAYLOAD)
+    return data
 
 
   def _listen(self):
@@ -74,60 +119,23 @@ class Server(object):
       # Helper variables
       msg_end_ndx = 0
       data = b""
-      is_first = True
       print("Waiting for a connection...")
-      connection, client_address = self.socket.accept()
-      try:
-        # When msg_start_ndx == msg_end_ndx this returns an empty byte (b"")
-        # while is_first or self._still_handling_data( data[msg_start_ndx : msg_end_ndx] ):
-        while True:
-          # print("looping...")
-          is_first = False
-          data += connection.recv(PAYLOAD) # buffered data
-          if data:
-            # print("Data received: {}".format(data))
-            byte_opcode = data[0:1]
-            cur_opcode = chr(int(data[0:1].hex(), 16)) # bytearray -> hex -> int -> ascii
-            msg_start_ndx = 1
-            msg_end_ndx = msg_start_ndx + self.msg_size_mapping[ int(cur_opcode) ]
-            if cur_opcode == TRANSACTION_OPCODE:
-              tx = Transaction(data[msg_start_ndx : msg_end_ndx])
-              self.ledger.process_transaction(tx)
-            elif cur_opcode == CLOSE_OPCODE:
-              # handle close
-              self.terminate_server()
-              break
-            elif cur_opcode == BLOCK_OPCODE:
-              # handle block
-              block = Block(data[msg_start_ndx : msg_end_ndx], self.difficulty)
-              self.ledger.process_block(block)
-            elif cur_opcode == GET_BLOCK_OPCODE:
-              # handle get block
-              # get_block = self.ledger.get_block(block_height)
-              self.ledger.process_get_block(data[msg_start_ndx : msg_end_ndx])
-            self._echo_message_to(self.peers, byte_opcode + data[msg_start_ndx : msg_end_ndx])
-            data = data[msg_end_ndx:] # dump processed data from buffer
-            # print("Start: {} - End: {}\n".format(msg_start_ndx, msg_end_ndx))
-          else:
-            break
-      finally:
-        # end connection with client
-        # self.ledger.show_utxo_status()
-        print("Finished.")
-        connection.close()
-
-  def terminate_server(self):
-    """ Stop receiving data on port (terminate socket). """
-    self.socket.close()
+      connection, addr = self.socket.accept()
+      connection.settimeout(60*SECONDS)
+      t = threading.Thread(target=self._handle_data_from_connection, args=(connection, addr,))
+      self.threads.append(t)
+      t.start()
 
 
-  def _echo_message_to(self, peers, data):
+  def _echo_message_to(self, data):
     """ Echo valid messages to peer nodes. """
-    for peer in peers:
+    # print("\nBroadcast: {}\n".format(Transaction(data[1:])))
+    # print("Broadcast Data: {}".format(data))
+    for peer in self.peers:
       sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
       sock.connect( ("localhost", int(peer)) )
-      sock.sendall(data)
-      sock.close()
+      sock.send(data)
+    sock.close()
 
 
   def broadcast_transaction(self):
