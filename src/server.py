@@ -70,8 +70,8 @@ class Server(object):
   def _handle_data_from_connection(self, connection, address):
     """ Receive data from a connection until all data has been received. """
     self.thread_lock.acquire()
-    data, c = self._receive_from(connection, address)
-    input("Size of Data and Counter: {}".format(len(data)))
+    data = self._receive_from(connection, address)
+    # input("Size of Data and Counter: {}".format(len(data)))
     while len(data) > 0:
       cur_opcode = chr(int(data[0:1].hex(), 16)) # bytearray -> hex -> int -> char(ascii)
       msg_end_ndx = OPCODE_OFFSET + self.msg_size_mapping[ int(cur_opcode) ]
@@ -107,7 +107,7 @@ class Server(object):
     while incoming:
       data += incoming
       incoming = connection.recv(PAYLOAD)
-    return data, counter
+    return data
 
 
   def _listen(self):
@@ -125,7 +125,8 @@ class Server(object):
   def _echo_message_to(self, data):
     """ Echo valid messages to peer nodes. """
     # print("\nBroadcast: {}\n".format(Transaction(data[1:])))
-    print("Broadcast Data: {}".format(data))
+    print("Broadcast Data and Peers: {} and {}".format(data,
+	self.peers))
     for peer in self.peers:
       sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
       sock.connect( ("", int(peer)) )
