@@ -93,9 +93,9 @@ class Server(object):
       
       if broadcast:
         self._echo_message_to(data[0 : msg_end_ndx])
-      # print("\nData Buffer Before: {}\n".format(data))
+      print("\nData Buffer Before: {}\n".format(data))
       data = data[msg_end_ndx:] # dump processed data from buffer
-      # print("\nData Buffer After: {}\n".format(data))
+      print("\nData Buffer After: {}\n".format(data))
       # input()
     self.ledger.show_utxo_status()
     self.thread_lock.release()
