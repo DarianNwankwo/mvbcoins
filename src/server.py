@@ -70,13 +70,13 @@ class Server(object):
 
 
   def _receive_from(self, connection, address):
-  """ Receive data from a connection until all data has been received. """
-  incoming = connection.recv(PAYLOAD)
-  data = b""
-  while incoming:
-    data += incoming
+    """ Receive data from a connection until all data has been received. """
     incoming = connection.recv(PAYLOAD)
-  return data
+    data = b""
+    while incoming:
+      data += incoming
+      incoming = connection.recv(PAYLOAD)
+    return data
 
 
   def _handle_transaction(self, data):
@@ -107,18 +107,18 @@ class Server(object):
   def _get_message(self, data, opcode):
     """ Returns the messages (bytes) given a data buffer (bytearray) and opcode. """
     msg_end_ndx = OPCODE_OFFSET + self.msg_size_mapping[ int(opcode) ]
-    return data[OPCODE_OFFSET : msg_end_ndx]
+    return data[OPCODE_OFFSET : msg_end_ndx], msg_end_ndx
 
 
   def _handle_data(self, data, opcode):
     """ Returns true if given message is valid. """
-    if cur_opcode == TRANSACTION_OPCODE:
+    if opcode == TRANSACTION_OPCODE:
       return self._handle_transaction(data)
-    elif cur_opcode == CLOSE_OPCODE:
+    elif opcode == CLOSE_OPCODE:
       return self._handle_close(data)
-    elif cur_opcode == BLOCK_OPCODE:
+    elif opcode == BLOCK_OPCODE:
       return self._handle_block(data)
-    elif cur_opcode == GET_BLOCK_OPCODE:
+    elif opcode == GET_BLOCK_OPCODE:
       return self._handle_get_block(data)
 
   
@@ -128,8 +128,8 @@ class Server(object):
     should_broadcast = False
     while len(data) > 0:
       cur_opcode = from_byte_to_char(data[0:1])
-      msg = self._get_message(data, cur_opcode)      
-      should_broadcast = self._handle_data(msg)
+      msg, msg_end_ndx = self._get_message(data, cur_opcode)      
+      should_broadcast = self._handle_data(msg, cur_opcode)
       if should_broadcast:
         self._broadcast_to_peers(msg)
       data = data[msg_end_ndx:] # dump processed data from buffer
@@ -140,8 +140,10 @@ class Server(object):
     while WAITING_FOR_CONNECTION:
       print("Waiting for a connection...")
       connection, addr = self.socket.accept()
-      connection.timeout(60 * SECONDS)
-      self._handle_data_from_connection(connection, address)
+      print("Connection: {}\n".format(connection))
+      connection.settimeout(60 * SECONDS)
+      self._handle_data_from_connection(connection, addr)
+      self.ledger.show_utxo_status()
 
 
   def _broadcast_to_peers(self, data):
