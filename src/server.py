@@ -140,7 +140,7 @@ class Server(object):
     while WAITING_FOR_CONNECTION:
       print("Waiting for a connection...")
       connection, addr = self.socket.accept()
-      print("Connection: {}\n".format(connection))
+      # print("Connection: {}\n".format(connection))
       connection.settimeout(60 * SECONDS)
       self._handle_data_from_connection(connection, addr)
       self.ledger.show_utxo_status()
