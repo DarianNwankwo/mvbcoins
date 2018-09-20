@@ -132,6 +132,9 @@ class Server(object):
       should_broadcast = self._handle_data(msg, cur_opcode)
       if should_broadcast:
         self._broadcast_to_peers(msg)
+      if cur_opcode == CLOSE_OPCODE:
+        connection.close()
+        return 
       data = data[msg_end_ndx:] # dump processed data from buffer
 
 
@@ -143,7 +146,7 @@ class Server(object):
       # print("Connection: {}\n".format(connection))
       connection.settimeout(60 * SECONDS)
       self._handle_data_from_connection(connection, addr)
-      self.ledger.show_utxo_status()
+      # self.ledger.show_utxo_status()
 
 
   def _broadcast_to_peers(self, data):
