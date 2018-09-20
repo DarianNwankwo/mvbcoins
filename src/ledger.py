@@ -45,9 +45,19 @@ class Ledger(object):
     self.block_history.append( block.raw_byte_array() )
 
 
+  def _user_does_exist(self, tx):
+    """ Returns true if the user exists. """
+    return tx.sender in self.utxo and tx.receiver in self.utxo
+
+
+  def _user_has_funds(self, tx):
+    """ Returns true if the sender has enough coins to send, """
+    return self.utxo[tx.sender] - tx.amount >= 0
+
+
   def process_transaction(self, tx):
-    """ Initiate coin transfer and update history log via a Transaction object. """
-    if not self.is_double_spending(tx):
+    """ Initiate coin transfer and update history log via a Transaction object and returns true if we should broadcast. """
+    if not self.is_double_spending(tx) and self._user_does_exist(tx) and self._user_has_funds(tx):
       self.utxo[tx.sender] = self.utxo[tx.sender] - tx.amount
       self.utxo[tx.receiver] = self.utxo[tx.receiver] + tx.amount
       self.log_transaction(tx)
@@ -57,16 +67,21 @@ class Ledger(object):
       print("\nSomeone is attempting to double spend...\n")
       return False
 
-  
+
   def process_block(self, block):
     """ Initiate block proof-of-work (mining) and update history log via a Block object. """
     self.log_block(block)
+    return True
 
 
   def process_get_block(self, block_height):
     """ Return the byte array of a block at block_height. """
     return self.blocks[block_height]
 
+
+  def process_close(self):
+    """ Returns true. """
+    return True
 
   def get_block(self, block_height):
     if block_height <= len(self.blocks):

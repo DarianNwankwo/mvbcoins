@@ -8,6 +8,4 @@ from config import Config
 from server import Server
 
 if __name__ == "__main__":
-  config = Config("localhost")
-  node = Server(config)
-  node.run() # or, more succinctly Server(Config("localhost")).run()
+  Server(Config("localhost")).start()
