@@ -82,6 +82,7 @@ class Server(object):
   def _handle_transaction(self, data):
     """ Handles a bytearray and processes it as a transaction message. Returns true if it is valid. """
     tx = Transaction(data) # ignores opcode
+    print(tx)
     broadcast, block = self.ledger.process_transaction(tx)
     return broadcast, block
 
@@ -93,7 +94,7 @@ class Server(object):
 
   def _handle_block(self, data):
     """ Handles a bytearray and processes it as a block message. Returns true if it is valid. """
-    block = Block(data, self.difficulty)
+    block = Block(data, self.difficulty, self.tx_per_block)
     broadcast = self.ledger.process_block(block)
     return broadcast, None
 
