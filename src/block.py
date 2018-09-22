@@ -70,7 +70,7 @@ class Block(object):
     for i in range(len(ascii_string)//2):
       # print("Substring: {}".format(int(ascii_string[ 2*i : 2*i + 2 ], 16)))
       val += chr(int(ascii_string[ 2*i : 2*i + 2 ], 16))
-    print("Val Inside Parse Ascii: {}".format(val))
+    # print("Val Inside Parse Ascii: {}".format(val))
     return str(val)
 
 
@@ -84,6 +84,7 @@ class Block(object):
     sum_bytes = b""
     for attr, val in vars(self).items():
       if attr not in ('byte_array', 'hash', 'difficulty', 'tx_count'):
+        print("Val: {}".format(val))
         sum_bytes += bytes(val, "ascii")
     hashed = sha256(sum_bytes).hexdigest()
     hashed_bytes = bytes.fromhex(hashed)
