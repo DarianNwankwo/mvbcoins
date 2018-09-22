@@ -84,7 +84,7 @@ class Block(object):
     sum_bytes = b""
     for attr, val in vars(self).items():
       if attr not in ('byte_array', 'hash', 'difficulty', 'tx_count'):
-        print("Val: {}".format(val))
+        # print("Val: {}".format(val))
         sum_bytes += bytes(str(val), "ascii")
     hashed = sha256(sum_bytes).hexdigest()
     hashed_bytes = bytes.fromhex(hashed)
@@ -98,6 +98,7 @@ class Block(object):
     while (self.hash[0:self.difficulty] != "0" * self.difficulty):
       self.nonce += 1
       self.hash = self.calculate_hash()
+    input("Final Hash: {}".format(self.hash))
 
   
   @classmethod
