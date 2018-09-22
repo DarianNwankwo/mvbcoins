@@ -38,6 +38,7 @@ class Block(object):
 
   def _parse_block(self, data_as_hex):
     """ Returns a tuple of the arguments decoded from the raw byte array. """
+    print("Data as hex: {}\n".format(data_as_hex))
     nonce = self._parse_ascii_byte_array(data_as_hex[0:64])
     prev_hash = data_as_hex[64:128]
     # cur_hash = data_as_hex[128:192]
