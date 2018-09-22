@@ -45,7 +45,7 @@ class Block(object):
     prev_hash = data_as_hex[64:128]
     # cur_hash = data_as_hex[128:192]
     block_height = self._parse_ascii_byte_array(data_as_hex[192:256])
-    miner_address = self._parse_ascii_byte_array(data_as_hex[256:320])
+    miner_address = self._parse_ascii_byte_array_to_str(data_as_hex[256:320])
     block_data = self._parse_ascii_byte_array(data_as_hex[320:])
     cur_hash = self.calculate_hash()
     return (nonce, prev_hash, cur_hash, block_height, miner_address, block_data)
@@ -60,6 +60,17 @@ class Block(object):
       val += chr(int(ascii_string[ 2*i : 2*i + 2 ], 16))
     # print("Val Inside Parse Ascii: {}".format(val))
     return int(val)
+
+
+  def _parse_ascii_byte_array_to_str(self, ascii_string):
+    """ Parses the nonce, prev_hash, cur_hash, block_height, miner_address, and block_Data and returns the integer representation. """
+    # print("Value of Ascii String: {}".format(ascii_string))
+    val = ""
+    for i in range(len(ascii_string)//2):
+      # print("Substring: {}".format(int(ascii_string[ 2*i : 2*i + 2 ], 16)))
+      val += chr(int(ascii_string[ 2*i : 2*i + 2 ], 16))
+    # print("Val Inside Parse Ascii: {}".format(val))
+    return str(val)
 
 
   def raw_byte_array(self):
