@@ -99,6 +99,7 @@ class Ledger(object):
     data = nonce + prior_hash + cur_hash + blockheight + miner_addr + blockdata
     new_block = Block(data, self.block_difficulty, self.tx_per_block)
     new_block.mine_block()
+    print(new_block)
     return new_block
 
 
