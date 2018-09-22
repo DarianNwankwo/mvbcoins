@@ -53,8 +53,8 @@ class Block(object):
     """ Parses the nonce, prev_hash, cur_hash, block_height, miner_address, and block_Data and returns the integer representation. """
     val = ""
     for i in range(len(ascii_string)//2):
-        val += chr(int(ascii_string[ 2*i : 2*i + 2 ], 16))
-    print("Val Inside Parse Ascii: {}".format(val))
+      val += chr(int(ascii_string[ 2*i : 2*i + 2 ], 16))
+      print("Val Inside Parse Ascii: {}".format(val))
     return int(val)
 
 
