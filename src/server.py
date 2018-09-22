@@ -129,10 +129,12 @@ class Server(object):
     while len(data) > 0:
       cur_opcode = from_byte_to_char(data[0:1])
       msg, msg_end_ndx = self._get_message(data, cur_opcode)      
+      # print("Message and Opcode: {} -- {}".format(msg, cur_opcode))
       should_broadcast = self._handle_data(msg, cur_opcode)
       if should_broadcast:
         self._broadcast_to_peers(msg)
       if cur_opcode == CLOSE_OPCODE:
+        # print("Closing connection...")
         connection.close()
         exit() 
       data = data[msg_end_ndx:] # dump processed data from buffer
