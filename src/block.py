@@ -15,6 +15,7 @@ class Block(object):
   def __init__(self, byte_array, difficulty, tx_count):
     if len(byte_array) > 0:
       self.byte_array = byte_array
+      print("First 32 Nonce: {}".format(byte_array[0:32]))
       block_info = self._parse_block(byte_array.hex())
       self.nonce = block_info[0]
       self.prev_hash = block_info[1]

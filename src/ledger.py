@@ -85,7 +85,7 @@ class Ledger(object):
     """ Mine a new block. """
     # Create a new block by concatenating tx history together and pass that to the block constructor along with difficulty
     # A Block contains a nonce, prior hash, blockheight, miner-address, and blockdata
-    nonce = self._add_byte_padding( bytes([1]), 32 )
+    nonce = self._add_byte_padding( bytes([1]), 32 ).hex()
     prior_hash = bytes.fromhex(self.blocks[ len(self.blocks) - 1 ].hash)
     blockheight = self._add_byte_padding( bytes([ len(self.blocks) ]), 32 )
     miner_addr = self._add_byte_padding( bytes("don4", encoding="ascii"), 32 )
