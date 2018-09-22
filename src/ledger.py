@@ -90,7 +90,7 @@ class Ledger(object):
     cur_hash = self._add_byte_padding(bytes([0]), 32)
     blockheight = self._add_byte_padding( bytes([ len(self.blocks) ]), 32 )
     miner_addr = self._add_byte_padding( bytes("don4", encoding="ascii"), 32 )
-    blockdata = b"".join(self.tx_history)
+    blockdata = b"".join(self.tx_history) # concatenates raw byte history
     # print("Type: {}".format(type(nonce)))
     # print("Type: {}".format(type(prior_hash)))
     # print("Type: {}".format(type(blockheight)))
