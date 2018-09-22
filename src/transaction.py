@@ -53,6 +53,7 @@ class Transaction(object):
 
   def _parse_ascii_byte_array(self, ascii_string):
     """ Parses the amount and timestamp and returns the integer representation. """
+    print("Value of Ascii String: {}".format(ascii_string))
     val = ""
     for i in range(len(ascii_string)//2):
       print("Substring: {}".format(int(ascii_string[ 2*i : 2*i + 2 ], 16)))
