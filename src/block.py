@@ -83,7 +83,7 @@ class Block(object):
     """ Calculates the hash value of a block. """
     sum_bytes = b""
     for attr, val in vars(self).items():
-      if attr not in ('byte_array', 'hash', 'difficulty'):
+      if attr not in ('byte_array', 'hash', 'difficulty', 'tx_count'):
         sum_bytes += bytes(val, "ascii")
     hashed = sha256(sum_bytes).hexdigest()
     hashed_bytes = bytes.fromhex(hashed)
