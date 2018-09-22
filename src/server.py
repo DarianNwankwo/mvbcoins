@@ -134,7 +134,7 @@ class Server(object):
         self._broadcast_to_peers(msg)
       if cur_opcode == CLOSE_OPCODE:
         connection.close()
-        return 
+        exit() 
       data = data[msg_end_ndx:] # dump processed data from buffer
 
 
