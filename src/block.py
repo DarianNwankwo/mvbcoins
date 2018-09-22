@@ -32,7 +32,7 @@ class Block(object):
     builder =  "Block [ Nonce {}, Prior Hash {}, Hash {}, Blockheight {}, Miner Address {}, Transaction Below ]\n".format(
       self.nonce, self.prev_hash, self.hash, self.block_height, self.miner_address
     )
-    for tx in range(tx_count):
+    for tx in range(self.tx_count):
       builder += "\t" + Transaction( self.byte_array[start + (128 * tx) : start + (128 * (tx + 1))] ).__str__() + "\n"
     return builder
   
