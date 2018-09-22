@@ -87,7 +87,7 @@ class Ledger(object):
     # A Block contains a nonce, prior hash, blockheight, miner-address, and blockdata
     nonce = self._add_byte_padding( bytes([1]), 32 )
     prior_hash = bytes.fromhex(self.blocks[ len(self.blocks) - 1 ].hash)
-    cur_hash = self._add_byte_padding(bytes[0], 32)
+    cur_hash = self._add_byte_padding(bytes([0]), 32)
     blockheight = self._add_byte_padding( bytes([ len(self.blocks) ]), 32 )
     miner_addr = self._add_byte_padding( bytes("don4", encoding="ascii"), 32 )
     blockdata = b"".join(self.tx_history)
