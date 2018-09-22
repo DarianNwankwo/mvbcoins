@@ -69,7 +69,7 @@ class Block(object):
     for i in range(len(ascii_string)//2):
       # print("Substring: {}".format(int(ascii_string[ 2*i : 2*i + 2 ], 16)))
       val += chr(int(ascii_string[ 2*i : 2*i + 2 ], 16))
-    # print("Val Inside Parse Ascii: {}".format(val))
+    print("Val Inside Parse Ascii: {}".format(val))
     return str(val)
 
 
