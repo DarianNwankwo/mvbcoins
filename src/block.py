@@ -38,7 +38,7 @@ class Block(object):
 
   def _parse_block(self, data_as_hex):
     """ Returns a tuple of the arguments decoded from the raw byte array. """
-    print("Data as hex: {}\n".format(data_as_hex))
+    # print("Data as hex: {}\n".format(data_as_hex))
     nonce = self._parse_ascii_byte_array(data_as_hex[0:64])
     prev_hash = data_as_hex[64:128]
     # cur_hash = data_as_hex[128:192]
@@ -51,6 +51,7 @@ class Block(object):
 
   def _parse_ascii_byte_array(self, ascii_string):
     """ Parses the nonce, prev_hash, cur_hash, block_height, miner_address, and block_Data and returns the integer representation. """
+    print("Value of Ascii String: {}".format(ascii_string))
     val = ""
     for i in range(len(ascii_string)//2):
       val += chr(int(ascii_string[ 2*i : 2*i + 2 ], 16))
