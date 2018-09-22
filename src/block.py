@@ -46,6 +46,7 @@ class Block(object):
     # cur_hash = data_as_hex[128:192]
     block_height = int(data_as_hex[192:256])
     miner_address = self._parse_ascii_byte_array_to_str(data_as_hex[256:320])
+    print("\nBlock Data: {}\n".format(data_as_hex[320:]))
     block_data = self._parse_ascii_byte_array(data_as_hex[320:])
     cur_hash = self.calculate_hash()
     return (nonce, prev_hash, cur_hash, block_height, miner_address, block_data)
