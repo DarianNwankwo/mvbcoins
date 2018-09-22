@@ -54,6 +54,7 @@ class Block(object):
     val = ""
     for i in range(len(ascii_string)//2):
         val += chr(int(ascii_string[ 2*i : 2*i + 2 ], 16))
+    print("Val Inside Parse Ascii: {}".format(val))
     return int(val)
 
 
