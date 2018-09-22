@@ -15,7 +15,7 @@ class Block(object):
   def __init__(self, byte_array, difficulty, tx_count):
     if len(byte_array) > 0:
       self.byte_array = byte_array
-      print("First 32 Nonce: {}".format(byte_array[0:32]))
+      # print("First 32 Nonce: {}".format(byte_array[0:32]))
       block_info = self._parse_block(byte_array.hex())
       self.nonce = block_info[0]
       self.prev_hash = block_info[1]
@@ -40,7 +40,8 @@ class Block(object):
   def _parse_block(self, data_as_hex):
     """ Returns a tuple of the arguments decoded from the raw byte array. """
     # print("Data as hex: {}\n".format(data_as_hex))
-    nonce = self._parse_ascii_byte_array(data_as_hex[0:64])
+    # nonce = self._parse_ascii_byte_array(data_as_hex[0:64])
+    nonce = int(data_as_hex[0:64])
     prev_hash = data_as_hex[64:128]
     # cur_hash = data_as_hex[128:192]
     block_height = self._parse_ascii_byte_array(data_as_hex[192:256])
@@ -52,12 +53,12 @@ class Block(object):
 
   def _parse_ascii_byte_array(self, ascii_string):
     """ Parses the nonce, prev_hash, cur_hash, block_height, miner_address, and block_Data and returns the integer representation. """
-    print("Value of Ascii String: {}".format(ascii_string))
+    # print("Value of Ascii String: {}".format(ascii_string))
     val = ""
     for i in range(len(ascii_string)//2):
-      print("Substring: {}".format(int(ascii_string[ 2*i : 2*i + 2 ], 16)))
+      # print("Substring: {}".format(int(ascii_string[ 2*i : 2*i + 2 ], 16)))
       val += chr(int(ascii_string[ 2*i : 2*i + 2 ], 16))
-    print("Val Inside Parse Ascii: {}".format(val))
+    # print("Val Inside Parse Ascii: {}".format(val))
     return int(val)
 
 
