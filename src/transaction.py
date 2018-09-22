@@ -20,7 +20,7 @@ class Transaction(object):
   
   def __str__(self):
     """ Pretty printing of transaction for debugging purposes. """
-    return "\nSender: {} -- Receiver: {} -- Amount: {} -- Timestamp: {}\n".format(
+    return "Transaction [ Sender {}, Receiver {}, Amount {}, Timestamp {} ]".format(
       self.sender, self.receiver, self.amount, self.timestamp
     )
   

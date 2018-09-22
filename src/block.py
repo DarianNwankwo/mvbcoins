@@ -5,29 +5,46 @@ Description: Block class used to keep track of transactions
 """
 from hashlib import sha256
 
+
+from transaction import Transaction
+
+
 class Block(object):
   """ Hanldes blocks. """
 
-  def __init__(self, byte_array, difficulty):
-    self.byte_array = byte_array
-    block_info = self._parse_block(byte_array.hex())
-    self.nonce = block_info[0]
-    self.prev_hash = block_info[1]
-    self.hash = block_info[2]
-    self.block_height = block_info[3]
-    self.miner_address = block_info[4]
-    self.block_data = block_info[5] # transactions
+  def __init__(self, byte_array, difficulty, tx_count):
+    if len(byte_array) > 0:
+      self.byte_array = byte_array
+      block_info = self._parse_block(byte_array.hex())
+      self.nonce = block_info[0]
+      self.prev_hash = block_info[1]
+      self.hash = block_info[2]
+      self.block_height = block_info[3]
+      self.miner_address = block_info[4]
+      self.block_data = block_info[5] # transactions
     self.difficulty = difficulty
+    self.tx_count = tx_count
+
+
+  def __str__(self):
+    start = 160
+    builder =  "Block [ Nonce {}, Prior Hash {}, Hash {}, Blockheight {}, Miner Address {}, Transaction Below ]\n".format(
+      self.nonce, self.prev_hash, self.hash, self.block_height, self.miner_address
+    )
+    for tx in range(tx_count):
+      builder += "\t" + Transaction( self.byte_array[start + (128 * tx) : start + (128 * (tx + 1))] ).__str__() + "\n"
+    return builder
   
 
   def _parse_block(self, data_as_hex):
     """ Returns a tuple of the arguments decoded from the raw byte array. """
     nonce = self._parse_ascii_byte_array(data_as_hex[0:64])
     prev_hash = data_as_hex[64:128]
-    cur_hash = data_as_hex[128:192]
+    # cur_hash = data_as_hex[128:192]
     block_height = self._parse_ascii_byte_array(data_as_hex[192:256])
     miner_address = self._parse_ascii_byte_array(data_as_hex[256:320])
     block_data = self._parse_ascii_byte_array(data_as_hex[320:])
+    cur_hash = self.calculate_hash()
     return (nonce, prev_hash, cur_hash, block_height, miner_address, block_data)
 
 
@@ -50,7 +67,11 @@ class Block(object):
     for attr, val in vars(self).items():
       if attr not in ('byte_array', 'hash', 'difficulty'):
         sum_bytes += bytes(val, "ascii")
-    return sha256(sum_bytes).hexdigest()
+    hashed = sha256(sum_bytes).hexdigest()
+    hashed_bytes = bytes.fromhex(hashed)
+    self.byte_array = self.byte_array[0:96] + hashed_bytes + self.byte_array[128:] 
+
+    return hashed
 
 
   def mine_block(self):
@@ -63,4 +84,8 @@ class Block(object):
   @classmethod
   def create_genesis_block(cls):
     """ Create a genesis block to start the chain. """
-    pass
+    genesis = Block("", 1, 0)
+    genesis.hash = sha256( bytes("0", encoding="ascii") ).hexdigest()
+    genesis.prev_hash = sha256( bytes("", encoding="ascii") ).hexdigest()
+    genesis.block_height = 0
+    return genesis

@@ -38,7 +38,7 @@ class Server(object):
     self._unpack(config)
     self.msg_size_mapping = self._create_msg_mapping()
     self.socket = self._create_socket_server()
-    self.ledger = Ledger()
+    self.ledger = Ledger(self.tx_per_block, self.difficulty)
 
 
   def _unpack(self, config):
@@ -82,26 +82,26 @@ class Server(object):
   def _handle_transaction(self, data):
     """ Handles a bytearray and processes it as a transaction message. Returns true if it is valid. """
     tx = Transaction(data) # ignores opcode
-    broadcast = self.ledger.process_transaction(tx)
-    return broadcast
+    broadcast, block = self.ledger.process_transaction(tx)
+    return broadcast, block
 
 
   def _handle_close(self, data):
     """ Handles a bytearray and processes it as a close message. Returns true if it is valid. """
-    return self.ledger.process_close()
+    return self.ledger.process_close(), None
 
 
   def _handle_block(self, data):
     """ Handles a bytearray and processes it as a block message. Returns true if it is valid. """
     block = Block(data, self.difficulty)
     broadcast = self.ledger.process_block(block)
-    return broadcast
+    return broadcast, None
 
 
   def _handle_get_block(self, data):
     """ Handles a bytearray and processes it as a get block message. Returns false since the message does not need to be broadcast. """
     self.ledger.process_get_block(data[OPCODE_OFFSET : msg_end_ndx])
-    return False
+    return False, None
 
 
   def _get_message(self, data, opcode):
@@ -130,8 +130,11 @@ class Server(object):
       cur_opcode = from_byte_to_char(data[0:1])
       msg, msg_end_ndx = self._get_message(data, cur_opcode)      
       # print("Message and Opcode: {} -- {}".format(msg, cur_opcode))
-      should_broadcast = self._handle_data(msg, cur_opcode)
-      if should_broadcast:
+      should_broadcast, block_data = self._handle_data(msg, cur_opcode)
+      if should_broadcast and block_data:
+        self._broadcast_to_peers(msg)
+        self._broadcast_to_peers(block_data)
+      elif should_broadcast:
         self._broadcast_to_peers(msg)
       if cur_opcode == CLOSE_OPCODE:
         # print("Closing connection...")
