@@ -90,9 +90,11 @@ class Ledger(object):
     blockheight = self._add_byte_padding( bytes([ len(self.blocks) ]), 32 )
     miner_addr = self._add_byte_padding( bytes("don4", encoding="ascii"), 32 )
     blockdata = b"".join(self.tx_history)
+    data = nonce + prior_hash + blockheight + miner_addr + blockdata
     new_block = Block(
-      nonce + prior_hash + blockheight + miner_addr + blockdata,
-      self.block_difficulty, self.tx_per_block
+      data,
+      self.block_difficulty,
+      self.tx_per_block
       )
     new_block.mine_block()
     return new_block
