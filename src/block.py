@@ -76,7 +76,7 @@ class Block(object):
 
   def raw_byte_array(self):
     """ Returns the raw byte array of the block. """
-    return self.byte_array
+    return b"2" + self.byte_array
 
 
   def calculate_hash(self):

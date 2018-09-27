@@ -133,7 +133,7 @@ class Server(object):
       # print("Message and Opcode: {} -- {}".format(msg, cur_opcode))
       should_broadcast, block_data = self._handle_data(msg, cur_opcode)
       if should_broadcast and block_data:
-        self._broadcast_to_peers(msg)
+        self._broadcast_to_peers(b"0" + msg)
         self._broadcast_to_peers(block_data.raw_byte_array())
       elif should_broadcast:
         self._broadcast_to_peers(msg)

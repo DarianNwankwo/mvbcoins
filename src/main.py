@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Author: Darian Osahar Nwankwo
 Date: September 10, 2018
