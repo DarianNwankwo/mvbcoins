@@ -82,7 +82,7 @@ class Server(object):
   def _handle_transaction(self, data):
     """ Handles a bytearray and processes it as a transaction message. Returns true if it is valid. """
     tx = Transaction(data) # ignores opcode
-    print(tx)
+    # print(tx)
     broadcast, block = self.ledger.process_transaction(tx)
     return broadcast, block
 
@@ -101,7 +101,8 @@ class Server(object):
 
   def _handle_get_block(self, data):
     """ Handles a bytearray and processes it as a get block message. Returns false since the message does not need to be broadcast. """
-    self.ledger.process_get_block(data[OPCODE_OFFSET : msg_end_ndx])
+    block_height = data[OPCODE_OFFSET : msg_end_ndx]
+    self.ledger.process_get_block(block_height)
     return False, None
 
 
@@ -148,6 +149,7 @@ class Server(object):
     """ Listens for a connection and corresponding raw bytes. """
     while WAITING_FOR_CONNECTION:
       print("Waiting for a connection...")
+      print("Blocks in Ledger: {}".format(len(self.ledger.blocks)))
       connection, addr = self.socket.accept()
       # print("Connection: {}\n".format(connection))
       connection.settimeout(60 * SECONDS)

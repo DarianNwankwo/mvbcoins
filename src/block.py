@@ -44,9 +44,9 @@ class Block(object):
     nonce = int(data_as_hex[0:64])
     prev_hash = data_as_hex[64:128]
     # cur_hash = data_as_hex[128:192]
-    block_height = int(data_as_hex[192:256])
+    block_height = int(data_as_hex[192:256], 16)
     miner_address = self._parse_ascii_byte_array_to_str(data_as_hex[256:320])
-    print("\nBlock Data: {}\n".format(data_as_hex[320:]))
+    # print("\nBlock Data: {}\n".format(data_as_hex[320:]))
     block_data = data_as_hex[320:]
     cur_hash = self.calculate_hash()
     return (nonce, prev_hash, cur_hash, block_height, miner_address, block_data)
@@ -95,10 +95,11 @@ class Block(object):
 
   def mine_block(self):
     """ Mines the block until a particular difficulty is achieved. """
+    # print("\nMining...")
     while (self.hash[0:self.difficulty] != "0" * self.difficulty):
       self.nonce += 1
       self.hash = self.calculate_hash()
-    input("Final Hash: {}".format(self.hash))
+    # input("Final Hash: {}\n".format(self.hash))
 
   
   @classmethod

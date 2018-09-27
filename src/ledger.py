@@ -77,7 +77,7 @@ class Ledger(object):
       return True, None
     else:
       # raise an error
-      print("\nSomeone is attempting to double spend...\n")
+      # print("\nSomeone is attempting to double spend...\n")
       return False, None
 
 
@@ -88,23 +88,23 @@ class Ledger(object):
     nonce = self._add_byte_padding( bytes([1]), 32 )
     prior_hash = bytes.fromhex(self.blocks[ len(self.blocks) - 1 ].hash)
     cur_hash = self._add_byte_padding(bytes([0]), 32)
-    blockheight = self._add_byte_padding( bytes([ len(self.blocks) ]), 32 )
+    # print(len(self.blocks))
+    # blockheight = self._add_byte_padding( bytes([ len(self.blocks) ]), 32 )
+    blockheight = (len(self.blocks)).to_bytes(32, byteorder='big')
     miner_addr = self._add_byte_padding( bytes("don4", encoding="ascii"), 32 )
     blockdata = b"".join(self.tx_history) # concatenates raw byte history
-    # print("Type: {}".format(type(nonce)))
-    # print("Type: {}".format(type(prior_hash)))
-    # print("Type: {}".format(type(blockheight)))
-    # print("Type: {}".format(type(miner_addr)))
-    # print("Type: {}".format(type(blockdata)))
     data = nonce + prior_hash + cur_hash + blockheight + miner_addr + blockdata
     new_block = Block(data, self.block_difficulty, self.tx_per_block)
     new_block.mine_block()
-    print(new_block)
+    self.blocks.append(new_block)
+    # print(new_block)
     return new_block
 
 
   def _add_byte_padding(self, byte_val, width):
     """ Adds padding to a bytearray to fit message size. """
+    # print((width - len(bytes(byte_val))))
+    # print(bytes(byte_val))
     return (width - len(bytes(byte_val))) * bytes([0]) + bytes(byte_val)
 
 
@@ -116,7 +116,8 @@ class Ledger(object):
 
   def process_get_block(self, block_height):
     """ Return the byte array of a block at block_height. """
-    return self.blocks[block_height]
+    print(self.get_block(block_height))
+    return self.get_block(block_height)
 
 
   def process_close(self):
@@ -125,7 +126,7 @@ class Ledger(object):
 
   def get_block(self, block_height):
     if block_height <= len(self.blocks):
-      return self.blocks[block_height - 1]
+      return self.blocks[block_height]
 
 
   def show_utxo_status(self):
