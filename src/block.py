@@ -41,10 +41,13 @@ class Block(object):
     """ Returns a tuple of the arguments decoded from the raw byte array. """
     # print("Data as hex: {}\n".format(data_as_hex))
     # nonce = self._parse_ascii_byte_array(data_as_hex[0:64])
-    nonce = int(data_as_hex[0:64])
+    # print("Nonce before: {}\n".format(data_as_hex[0:64]))
+    nonce = self._parse_ascii_byte_array(data_as_hex[0:64])
     prev_hash = data_as_hex[64:128]
     # cur_hash = data_as_hex[128:192]
-    block_height = int(data_as_hex[192:256], 16)
+    # print("Block Height (HEX): {}".format(data_as_hex[192:256]))
+    block_height = self._parse_ascii_byte_array(data_as_hex[192:256])
+    # print("Block Height (INT): {}".format(block_height))
     miner_address = self._parse_ascii_byte_array_to_str(data_as_hex[256:320])
     # print("\nBlock Data: {}\n".format(data_as_hex[320:]))
     block_data = data_as_hex[320:]
@@ -76,7 +79,7 @@ class Block(object):
 
   def raw_byte_array(self):
     """ Returns the raw byte array of the block. """
-    return b"2" + self.byte_array
+    return bytes("2", "ascii") + self.byte_array
 
 
   def calculate_hash(self):
@@ -88,7 +91,9 @@ class Block(object):
         sum_bytes += bytes(str(val), "ascii")
     hashed = sha256(sum_bytes).hexdigest()
     hashed_bytes = bytes.fromhex(hashed)
-    self.byte_array = self.byte_array[0:96] + hashed_bytes + self.byte_array[128:] 
+    # print("Hashed Bytes: {}\n".format(hashed_bytes))
+    self.byte_array = self.byte_array[0:64] + hashed_bytes + self.byte_array[96:]
+    # print("Byte Array of Block: {}\n".format(self.byte_array))
 
     return hashed
 
@@ -96,17 +101,31 @@ class Block(object):
   def mine_block(self):
     """ Mines the block until a particular difficulty is achieved. """
     # print("\nMining...")
-    while (self.hash[0:self.difficulty] != "0" * self.difficulty):
+    while (self.hash[0:(self.difficulty*2)] != "00" * self.difficulty):
       self.nonce += 1
       self.hash = self.calculate_hash()
-    # input("Final Hash: {}\n".format(self.hash))
+    # print("Byte array before update: {}".format(self))
+    self.byte_array = self._add_byte_padding(bytes(str(self.nonce), "ascii"), 32) + self.byte_array[32:]
+    # print("Byte array after update: {}".format(self))
+    # print("Final Hash - As Bytes: {}\n".format(self.hash, self.byte_array[96:128]))
+
+
+  def _add_byte_padding(self, byte_val, width):
+    """ Adds padding to a bytearray to fit message size. """
+    # print((width - len(bytes(byte_val))))
+    # print(bytes(byte_val))
+    return (width - len(bytes(byte_val))) * bytes("0", "ascii") + bytes(byte_val)
 
   
   @classmethod
-  def create_genesis_block(cls):
+  def create_genesis_block(cls, tx_count):
     """ Create a genesis block to start the chain. """
-    genesis = Block("", 1, 0)
-    genesis.hash = sha256( bytes("0", encoding="ascii") ).hexdigest()
-    genesis.prev_hash = sha256( bytes("", encoding="ascii") ).hexdigest()
-    genesis.block_height = 0
-    return genesis
+    # TODO: Actually create a real block
+    nonce = (0).to_bytes(32, "big")
+    prior_hash = bytes.fromhex("0" * 32)
+    cur_hash = bytes.fromhex( sha256(bytes("100", "ascii")).hexdigest() )
+    blockheight = (0).to_bytes(32, "big")
+    miner_addr = bytes([0]) * 28 + bytes("don4", "ascii")
+    block_data = b""
+    data = nonce + prior_hash + cur_hash + blockheight + miner_addr + block_data
+    return Block(data, 1, 0)

@@ -11,6 +11,7 @@ class Config(object):
   def __init__(self, node_ip):
     # self.port, self.peers, self.tx_per_block, self.difficulty, self.num_of_cores = self._parse_arguments()
     self.port, self.peers, self.tx_per_block, self.difficulty = self._parse_arguments()
+    # self.port, self.peers = self._parse_arguments()
     self.node_ip = node_ip
 
 
@@ -25,3 +26,4 @@ class Config(object):
     args = parser.parse_args()
     # return (args.port, args.peers.split(","), args.numtxinblock, args.difficulty, args.numcores)
     return (args.port, args.peers.split(","), args.numtxinblock, args.difficulty)
+    # return (args.port, args.peers.split(","))
