@@ -38,6 +38,7 @@ def is_double_spending(tx, tx_occurrence):
 
 def update_utxo(tx, utxo):
   """ Given a transaction and utxo set, update the utxo set. """
+  print(utxo)
   utxo[tx.sender] = utxo[tx.sender] - tx.amount
   utxo[tx.receiver] = utxo[tx.receiver] + tx.amount
   return utxo
