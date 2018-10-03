@@ -48,6 +48,7 @@ class Ledger(object):
 
   def process_transaction(self, tx):
     """ Initiate coin transfer and update history log via a Transaction object and returns true if we should broadcast. """
+    self.show_utxo_status()
     if is_valid_transaction(tx, self.utxo, self.tx_occurrence):
       self.utxo = update_utxo(tx, self.utxo)
       self.tx_occurrence = update_tx_occurrence(tx, self.tx_occurrence)
