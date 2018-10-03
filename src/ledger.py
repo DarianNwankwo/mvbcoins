@@ -19,6 +19,7 @@ class Ledger(object):
 
   def __init__(self, tx_per_block, block_difficulty):
     self.utxo = self._create_utxo_set()
+    self.show_utxo_status()
     self.tx_occurrence = {} # dict{str: bool}
     self.tx_history = [] # array of raw bytes
     self.blocks = [ Block.create_genesis_block() ] # array of block objects
