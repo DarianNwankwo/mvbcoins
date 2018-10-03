@@ -8,7 +8,7 @@ from hashlib import sha256
 
 
 from block import Block
-from helper import is_valid_transaction, update_utxo, update_tx_occurrence, update_tx_history, create_genesis_block
+from helper import is_valid_transaction, update_utxo, update_tx_occurrence, update_tx_history
 
 NUM_OF_ACCOUNTS = 100
 INITIAL_PAYOUT = int("100,000".replace(",", ""))
