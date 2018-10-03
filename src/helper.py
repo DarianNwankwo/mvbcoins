@@ -3,7 +3,8 @@ Author: Darian Osahar Nwankwo
 Date: October 3, 2018
 Description: Helper methods for node
 """
-from block import Block
+
+# from block import Block
 
 
 def ascii_to_int(ascii_string):
