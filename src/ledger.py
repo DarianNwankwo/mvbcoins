@@ -8,7 +8,7 @@ from hashlib import sha256
 
 
 from block import Block
-
+from helper import is_valid_transaction, update_utxo, update_tx_occurrence, update_tx_history, create_genesis_block
 
 NUM_OF_ACCOUNTS = 100
 INITIAL_PAYOUT = int("100,000".replace(",", ""))
@@ -21,7 +21,7 @@ class Ledger(object):
     self.utxo = self._create_utxo_set()
     self.tx_occurrence = {} # dict{str: bool}
     self.tx_history = [] # array of raw bytes
-    self.blocks = [ Block.create_genesis_block() ]
+    self.blocks = [ create_genesis_block() ] # array of block objects
     self.tx_per_block = tx_per_block
     self.block_difficulty = block_difficulty
 
@@ -35,39 +35,18 @@ class Ledger(object):
     return utxo
 
 
-  def is_double_spending(self, tx):
-    """ Returns true if a transaction is an occurrence of double spending. """
-    return tx.calculate_hash() in self.tx_occurrence
-  
-
-  def log_transaction(self, tx):
-    """ Stores transaction. """
-    self.tx_occurrence[ tx.calculate_hash() ] = True
-    self.tx_history.append( tx.raw_byte_array() )
-
-
   def log_block(self, block):
     """ Stores block. """
     # self.block_occurrence[ block.calculate_hash() ] = True
     self.block_history.append( block.raw_byte_array() )
 
 
-  def _user_does_exist(self, tx):
-    """ Returns true if the user exists. """
-    return tx.sender in self.utxo and tx.receiver in self.utxo
-
-
-  def _user_has_funds(self, tx):
-    """ Returns true if the sender has enough coins to send, """
-    return self.utxo[tx.sender] - tx.amount >= 0
-
-
   def process_transaction(self, tx):
     """ Initiate coin transfer and update history log via a Transaction object and returns true if we should broadcast. """
-    if not self.is_double_spending(tx) and self._user_does_exist(tx) and self._user_has_funds(tx):
-      self.utxo[tx.sender] = self.utxo[tx.sender] - tx.amount
-      self.utxo[tx.receiver] = self.utxo[tx.receiver] + tx.amount
-      self.log_transaction(tx)
+    if is_valid_transaction(tx, self.utxo, self.tx_occurrence):
+      self.utxo = update_utxo(tx, self.utxo)
+      self.tx_occurrence = update_tx_occurrence(tx, self.tx_occurrence)
+      self.tx_history = update_tx_history(tx, self.tx_history)
       # Mine a block
       if len(self.tx_history) == self.tx_per_block:
         block_to_broadcast = self.mine()
