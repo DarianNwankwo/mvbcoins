@@ -23,6 +23,9 @@ def is_valid_transaction(tx, utxo, tx_occurrence):
 
 def user_has_funds(tx, utxo):
   """ Returns true if the sender has enough coins to send. """
+  print(utxo)
+  for account in utxo:
+      print("Account #{}: {} MVBcoins".format(account, self.utxo[account]))
   return utxo[tx.sender] - tx.amount >= 0
 
 
