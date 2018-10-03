@@ -1,4 +1,4 @@
 #!/bin/sh
 
 cd src
-./main.py $@
+./main.py $@ > node_output.txt
