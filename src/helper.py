@@ -3,10 +3,6 @@ Author: Darian Osahar Nwankwo
 Date: October 3, 2018
 Description: Helper methods for node
 """
-
-# from block import Block
-
-
 def ascii_to_int(ascii_string):
   """ Returns the integer representation of an ascii string that has been decoded into a hex string.
   
@@ -57,11 +53,6 @@ def update_tx_history(tx, tx_history):
   """ Given a transaction and transaction history list, add the transaction to the history. """
   tx_history.append( tx.raw_byte_array() )
   return tx_history
-
-
-def create_genesis_block():
-  # nonce = 
-  genesis = Block()
 
 
 def block_data_exist(block_bytes, block_data_start):

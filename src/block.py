@@ -50,6 +50,11 @@ class Block(object):
     return (nonce, prev_hash, cur_hash, block_height, miner_address, block_data)
 
 
+  @classmethod
+  def create_genesis_block(cls):
+    return
+
+
   def raw_byte_array(self):
     """ Returns the raw byte array of the block. """
     return self.byte_array
