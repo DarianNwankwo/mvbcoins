@@ -1,28 +1,14 @@
-Waiting for a connection...
-----------------------------------------------------------------------------------------------------
-Results from ('127.0.0.1', 44594) connection:
+Previous Block Hash: 00342374efe2ca0d1271f8435bfd2e3cb076f2b1ecef78ad2f310728a86c40bd
+Block mined: Block [ Nonce 79228699548125919656820818239131469656983897462110771190618289796904359226059, Prior Hash 5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9, Hash e900342374efe2ca0d1271f8435bfd2e3cb076f2b1ecef78ad2f310728a86c40, Blockheight 0, Miner Address 30303030303030303030303030303030303030303030303030303030646f6e34, Transaction Below ]
+	Transaction [ Sender 811786ad1ae74adfdd20dd0372abaaebc6246e343aebd01da0bfc4c02bf0106c, Receiver 19581e27de7ced00ff1ce50b2047e7a567c76b1cbaebabe5ef03f7c3017bb5b7, Amount 1, Timestamp 153862059513288856 ]
+	Transaction [ Sender 1da51b8d8ff98f6a48f80ae79fe3ca6c26e1abb7b7d125259255d6d2b875ea08, Receiver 39fa9ec190eee7b6f4dff1100d6343e10918d044c75eac8f9e9a2596173f80c9, Amount 1, Timestamp 153862059513303212 ]
 
+Previous Block Hash: 00342374efe2ca0d1271f8435bfd2e3cb076f2b1ecef78ad2f310728a86c40bd
+Block mined: Block [ Nonce 21796157974083048550319244236929488537086114760591164995662604048548353814577, Prior Hash 5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9, Hash e900342374efe2ca0d1271f8435bfd2e3cb076f2b1ecef78ad2f310728a86c40, Blockheight 1, Miner Address 30303030303030303030303030303030303030303030303030303030646f6e34, Transaction Below ]
+	Transaction [ Sender 9400f1b21cb527d7fa3d3eabba93557a18ebe7a2ca4e471cfe5e4c5b4ca7f767, Receiver bdd2d3af3a5a1213497d4f1f7bfcda898274fe9cb5401bbc0190885664708fc2, Amount 1, Timestamp 153862059513312774 ]
+	Transaction [ Sender 29db0c6782dbd5000559ef4d9e953e300e2b479eed26d887ef3f92b921c06a67, Receiver 108c995b953c8a35561103e2014cf828eb654a99e310f87fab94c2f4b7d2a04f, Amount 1, Timestamp 153862059513321279 ]
 
-Received Data:
-b'0\xdaN\xa2\xa5Po&\x93\xea\xe1\x90\xd96\n\x1f1y<\x98\xa1\xad\xad\xe5\x1d\x93S:oR\n\xce\x1c9\xfa\x9e\xc1\x90\xee\xe7\xb6\xf4\xdf\xf1\x10\rcC\xe1\t\x18\xd0D\xc7^\xac\x8f\x9e\x9a%\x96\x17?\x80\xc900000000000000000000000000000568000000000000000000000000000000001'
-
-Broadcasting transaction and block
-Message Broadcast:
-b'0\xdaN\xa2\xa5Po&\x93\xea\xe1\x90\xd96\n\x1f1y<\x98\xa1\xad\xad\xe5\x1d\x93S:oR\n\xce\x1c9\xfa\x9e\xc1\x90\xee\xe7\xb6\xf4\xdf\xf1\x10\rcC\xe1\t\x18\xd0D\xc7^\xac\x8f\x9e\x9a%\x96\x17?\x80\xc90000000000000000000000000000056800000000000000000000000000000000' to
-
-Message Broadcast 1st:
-48
-
-Message Broadcast:
-b"200000000000000000000000000000001_\xec\xebf\xff\xc8o8\xd9Rxlmily\xc2\xdb\xc29\xddN\x91\xb4g)\xd7:'\xfbW\xe9\xe3\xb0\xc4B\x98\xfc\x1c\x14\x9a\xfb\xf4\xc8\x99o\xb9$'\xaeA\xe4d\x9b\x93L\xa4\x95\x99\x1bxR\xb8U000000000000000000000000000000000000000000000000000000000000don4\xdaN\xa2\xa5Po&\x93\xea\xe1\x90\xd96\n\x1f1y<\x98\xa1\xad\xad\xe5\x1d\x93S:oR\n\xce\x1c9\xfa\x9e\xc1\x90\xee\xe7\xb6\xf4\xdf\xf1\x10\rcC\xe1\t\x18\xd0D\xc7^\xac\x8f\x9e\x9a%\x96\x17?\x80\xc90000000000000000000000000000056800000000000000000000000000000000" to
-
-Message Broadcast 1st:
-50
-
-Message Broadcast:
-b'1' to
-
-Message Broadcast 1st:
-49
-
-Closing connection...
+Previous Block Hash: 00342374efe2ca0d1271f8435bfd2e3cb076f2b1ecef78ad2f310728a86c40bd
+Block mined: Block [ Nonce 21796157974083048550319244236929488537086114760591164995662604048548353814577, Prior Hash 5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9, Hash e900342374efe2ca0d1271f8435bfd2e3cb076f2b1ecef78ad2f310728a86c40, Blockheight 2, Miner Address 30303030303030303030303030303030303030303030303030303030646f6e34, Transaction Below ]
+	Transaction [ Sender 73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049, Receiver 7a61b53701befdae0eeeffaecc73f14e20b537bb0f8b91ad7c2936dc63562b25, Amount 1, Timestamp 153862059513330583 ]
+	Transaction [ Sender 6208ef0f7750c111548cf90b6ea1d0d0a66f6bff40dbef07cb45ec436263c7d6, Receiver 6208ef0f7750c111548cf90b6ea1d0d0a66f6bff40dbef07cb45ec436263c7d6, Amount 1, Timestamp 153862059513338963 ]

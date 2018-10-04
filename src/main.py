@@ -9,5 +9,5 @@ from config import Config
 from server import Server
 
 if __name__ == "__main__":
-  print("Running...")
+  # print("Running...")
   Server(Config("localhost")).start()
